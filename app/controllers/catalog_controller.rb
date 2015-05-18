@@ -4,16 +4,18 @@ require 'blacklight/catalog'
 class CatalogController < ApplicationController
 
   include Hydra::Catalog
+  #to disable permissions, we can coment out these two lines
   # These before_filters apply the hydra access controls
-  before_filter :enforce_show_permissions, :only=>:show
+  # before_filter :enforce_show_permissions, :only=>:show
   # This applies appropriate access controls to all solr queries
-  CatalogController.search_params_logic += [:add_access_controls_to_solr_params]
+  # CatalogController.search_params_logic += [:add_access_controls_to_solr_params]
 
 
   configure_blacklight do |config|
     config.search_builder_class = Hydra::SearchBuilder
     config.default_solr_params = {
       :qt => 'search',
+      :qf => "title_tesim author_tesim description_tesim", # tesim tokenization
       :rows => 10
     }
 
@@ -62,6 +64,7 @@ class CatalogController < ApplicationController
     config.add_index_field solr_name('title', :stored_searchable, type: :string), :label => 'Title:'
     config.add_index_field solr_name('title_vern', :stored_searchable, type: :string), :label => 'Title:'
     config.add_index_field solr_name('author', :stored_searchable, type: :string), :label => 'Author:'
+    config.add_index_field solr_name('description', :stored_searchable, type: :string), :label => 'Description:'
     config.add_index_field solr_name('author_vern', :stored_searchable, type: :string), :label => 'Author:'
     config.add_index_field solr_name('format', :symbol), :label => 'Format:'
     config.add_index_field solr_name('language', :stored_searchable, type: :string), :label => 'Language:'
@@ -71,6 +74,7 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the show (single result) view
     #   The ordering of the field names is the order of the display
+
     config.add_show_field solr_name('title', :stored_searchable, type: :string), :label => 'Title:'
     config.add_show_field solr_name('title_vern', :stored_searchable, type: :string), :label => 'Title:'
     config.add_show_field solr_name('subtitle', :stored_searchable, type: :string), :label => 'Subtitle:'
@@ -85,6 +89,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name('published_vern', :stored_searchable, type: :string), :label => 'Published:'
     config.add_show_field solr_name('lc_callnum', :stored_searchable, type: :string), :label => 'Call number:'
     config.add_show_field solr_name('isbn', :stored_searchable, type: :string), :label => 'ISBN:'
+    config.add_show_field solr_name('description', :stored_searchable, type: :string), :label => 'Description:'
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
