@@ -1,4 +1,5 @@
 class Book < ActiveFedora::Base
+  contains "pageContent"
   property :title, predicate: ::RDF::DC.title, multiple: false do |index|
     index.as :stored_searchable
   end
